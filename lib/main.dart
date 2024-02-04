@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:user_auth/Views/notes.dart';
+import 'package:user_auth/Authentication/login.dart';
+// import 'package:user_auth/Views/notes.dart';
 
 void main() {
   runApp(const MainApp());
@@ -17,7 +18,7 @@ class MainApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Notes(),
+      home: const LoginScreen(),
     );
   }
 }
