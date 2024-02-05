@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:user_auth/Authentication/signup.dart';
+import 'package:user_auth/Models/users.dart';
+import 'package:user_auth/SQLite/sqlite.dart';
+import 'package:user_auth/Views/notes.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,6 +15,22 @@ class _LoginScreenState extends State<LoginScreen> {
   final username = TextEditingController();
   final password = TextEditingController();
   bool isVisible = false;
+
+bool isLoginTrue = false;
+
+login() async{
+  var response = await db.login(User(username: username.text, password: password.text));
+  if(response == true) {
+    if(!mounted)return;
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Notes()));
+  } else {
+    setState(() {
+      isLoginTrue = true;
+    });
+  }
+}
+
+  final db = DatabaseHelper();
   
   final formKey = GlobalKey<FormState>();
   @override
@@ -39,6 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.red.withOpacity(.2)
                     ),
                     child: TextFormField(
+                      controller: username,
                       validator: (value) {
                         if(value!.isEmpty) {
                           return "username is required";
@@ -61,6 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: Colors.red.withOpacity(.3)
                     ),
                     child: TextFormField(
+                      controller: password,
                       validator: (value) {
                         if(value!.isEmpty) {
                           return "password is required";
@@ -96,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: TextButton(
                       onPressed: () {
                         if(formKey.currentState!.validate()) {
-                          
+                          login();
                         }
                       }, 
                       child: const Text(
@@ -109,10 +131,26 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text("Don't have an account? "),
-                      TextButton(onPressed: (){}, child: const Text("Sign up", style: TextStyle(color: Colors.red),))
+                      TextButton(onPressed: (){
+                        Navigator.push(context, 
+                          MaterialPageRoute(
+                            builder: (context) => const SignupScreen()
+                          ));
+                      }, 
+                      child: const Text(
+                        "Sign up", 
+                        style: TextStyle(
+                          color: Colors.red
+                          ),
+                        )
+                      )
                     ],
-                  )
-              
+                  ),
+            
+                isLoginTrue ? const Text(
+                  "username or password incorrect", 
+                  style: TextStyle(color: Colors.redAccent),
+                ) : const SizedBox()
                 ],
               ),
             ),
